@@ -65,6 +65,7 @@ public class UserTests {
 //TESTES
 
     @Test
+    @Order(1)
     public void CreateNewUser_WithValidData_ReturnOK (){
 
 //estrutura básica da liguagem
@@ -83,6 +84,46 @@ public class UserTests {
             .body("size()",equalTo(3));
     }
 
+//Criação do teste get
+    @Test
+    @Order(2)
+    public void GetLogin_ValidUser_ReturnOK(){
+        request 
+                .param("username", user.getUsername())
+                .param("password", user.getPassword())
+                .when()
+                .get("/user/login")
+                .then()
+                .assertThat().statusCode(200).and()
+                .time(lessThan(3000L))
+                .and().body(matchesJsonSchemaInClasspath("loginResponseSchema.json"));
+    }
 
+    @Test
+    @Order(3)
+    public void GetUserByUsername_userIsValid_ReturnOK(){
+        request
+                .when()
+                .get("/user/" + user.getUsername())
+                .then()
+                .assertThat().statusCode(200).and()
+                .time(lessThan(2000L))
+                .and().body("firstName", equalTo(user.getFirstName()));
+    
+        //TODO: SCHEMA VALIDATION
+
+    }
+
+    @Test
+    @Order(4)
+    public void DeleteUser_UserExists_ReturnOk(){
+        request 
+                .when()
+                .delete("/user/" + user.getUsername())
+                .then()
+                .assertThat().statusCode(200).and()
+                .time(lessThan(2000L))
+                .log();
+    }
     
 }
