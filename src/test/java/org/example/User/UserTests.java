@@ -1,5 +1,88 @@
 package org.example.User;
 
+import io.restassured.RestAssured;
+import io.restassured.filter.log.ErrorLoggingFilter;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestLogSpecification;
+import io.restassured.specification.RequestSpecification;
+
+import org.junit.jupiter.api.*;
+
+import com.github.javafaker.Faker;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.config.LogConfig.logConfig;
+import static io.restassured.module.jsv.JsonSchemaValidator.*;
+import static org.hamcrest.Matchers.*;
+
+import org.example.Entities.User;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//a tag acima permite 'setar' a ordem dos testes que tenha a tag Order;
+//os testes que não tiverem a tag, serão rodados depois.
+
 public class UserTests {
+
+    private static User user; //variável que será reaproveitada apenas para a classe User
+    
+    public static Faker faker; //criação do fake
+
+    public static RequestSpecification request; //criação do request
+    
+    @BeforeAll
+    public static void setup(){
+        RestAssured.baseURI = "https://petstore.swagger.io/v2";
+        //vai ser compartilhada (acessível) para todos os testes, já que é public.   
+
+        faker = new Faker();
+
+//criação de um usuário
+//deixando a criação do usuário na tag BeforeAll, ele vai usar o mesmo
+//usuário para todos os testes. 
+//Se colocar o faker se usuário no BeforeEach, ele vai criar um usuário
+//diferente para cada instancia de teste (COMPORTAMENTOS DIFERENTES)
+
+        user = new User(faker.name().username(),
+                faker.name().firstName(),  
+                faker.name().lastName(),
+                faker.internet().safeEmailAddress(),
+                faker.internet().password(8,10), 
+                faker.phoneNumber().toString());
+    }
+
+//É possível 'setar' uma requisição inicial
+    @BeforeEach
+    void setRequest(){
+        request = given() //linguagem BDD
+            .header("api-key", "special-key")
+            .contentType(ContentType.JSON); //.header("Content-Type", "application/json"); (pode ser escrito assim tbm)
+
+    }
+
+//TESTES
+
+    @Test
+    public void CreateNewUser_WithValidData_ReturnOK (){
+
+//estrutura básica da liguagem
+//given().header().when().get().then().assertThat();
+//mas o given e o header já tem, então será escrito da seguinte maneira:
+
+        request
+            .body(user)
+            .when()
+            .post("/user")
+            .then()
+            .assertThat().statusCode(200).and() //a partir daqui é bem parecido com o PostMan
+            .body("code", equalTo(200))              //os requisitos foram pegos dali.
+            .body("type",equalTo("unknown"))        //escrito com linguagem BDD
+            .body("message", isA(String.class))
+            .body("size()",equalTo(3));
+    }
+
+
     
 }
