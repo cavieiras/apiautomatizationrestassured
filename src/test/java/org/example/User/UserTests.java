@@ -1,6 +1,7 @@
 package org.example.User;
 
 import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.filter.log.ErrorLoggingFilter;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -21,8 +22,6 @@ import static org.hamcrest.Matchers.*;
 import org.example.Entities.User;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//a tag acima permite 'setar' a ordem dos testes que tenha a tag Order;
-//os testes que não tiverem a tag, serão rodados depois.
 
 public class UserTests {
 
@@ -56,7 +55,7 @@ public class UserTests {
 //É possível 'setar' uma requisição inicial
     @BeforeEach
     void setRequest(){
-        request = given() //linguagem BDD
+        request = given().config(RestAssured.config().logConfig(logConfig().enableLoggingOfRequestAndResponseIfValidationFails()))
             .header("api-key", "special-key")
             .contentType(ContentType.JSON); //.header("Content-Type", "application/json"); (pode ser escrito assim tbm)
 
@@ -106,8 +105,7 @@ public class UserTests {
                 .when()
                 .get("/user/" + user.getUsername())
                 .then()
-                .assertThat().statusCode(200).and()
-                .time(lessThan(2000L))
+                .assertThat().statusCode(200).and().time(lessThan(2000L))
                 .and().body("firstName", equalTo(user.getFirstName()));
     
         //TODO: SCHEMA VALIDATION
