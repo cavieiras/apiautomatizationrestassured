@@ -11,6 +11,8 @@ import com.github.javafaker.Faker;
 
 import static org.hamcrest.Matchers.*;
 
+import static io.restassured.module.jsv.JsonSchemaValidator.*;
+
 import org.example.Entities.Pets;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -37,6 +39,7 @@ public class PetsTests {
     }
 
     @Test
+    @Order(1)
     public void CreateNewPet_WithValidData_ReturnOk(){
         request
             .body(pet)
@@ -51,8 +54,15 @@ public class PetsTests {
     }
 
     @Test
+    @Order(2)
     public void GetPetByName_ReturnOk(){
-
+        request
+                .param("name" + pet.getName())
+                .when()
+                .get("/pet/name")
+                .then()
+                .assertThat().statusCode(200).and().and()
+                .time(lessThan(2000l)).and().body(matchesJsonSchemaInClasspath("creatNewPet.json"));
     }
 
     

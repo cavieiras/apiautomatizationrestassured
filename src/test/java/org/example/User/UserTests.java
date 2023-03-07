@@ -1,13 +1,13 @@
 package org.example.User;
 
 import io.restassured.RestAssured;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.filter.log.ErrorLoggingFilter;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
+//import io.restassured.config.RestAssuredConfig;
+//import io.restassured.filter.log.ErrorLoggingFilter;
+//import io.restassured.filter.log.RequestLoggingFilter;
+//import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestLogSpecification;
+//import io.restassured.response.Response;
+//import io.restassured.specification.RequestLogSpecification;
 import io.restassured.specification.RequestSpecification;
 
 import org.junit.jupiter.api.*;
