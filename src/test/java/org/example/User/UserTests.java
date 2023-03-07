@@ -62,15 +62,13 @@ public class UserTests {
     }
 
 //TESTES
-
-    @Test
-    @Order(1)
-    public void CreateNewUser_WithValidData_ReturnOK (){
-
 //estrutura básica da liguagem
 //given().header().when().get().then().assertThat();
 //mas o given e o header já tem, então será escrito da seguinte maneira:
 
+    @Test
+    @Order(1)
+    public void CreateNewUser_WithValidData_ReturnOK (){
         request
             .body(user)
             .when()
@@ -83,7 +81,6 @@ public class UserTests {
             .body("size()",equalTo(3));
     }
 
-//Criação do teste get
     @Test
     @Order(2)
     public void GetLogin_ValidUser_ReturnOK(){
@@ -100,7 +97,7 @@ public class UserTests {
 
     @Test
     @Order(3)
-    public void GetUserByUsername_userIsValid_ReturnOK(){
+    void GetUserByUsername_userIsValid_ReturnOK(){
         request
                 .when()
                 .get("/user/" + user.getUsername())
@@ -114,7 +111,7 @@ public class UserTests {
 
     @Test
     @Order(4)
-    public void DeleteUser_UserExists_ReturnOk(){
+    void DeleteUser_UserExists_ReturnOk(){
         request 
                 .when()
                 .delete("/user/" + user.getUsername())

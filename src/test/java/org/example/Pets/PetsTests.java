@@ -31,7 +31,7 @@ public class PetsTests {
     }
     
     @BeforeEach
-    public void setRequest(){
+    void setRequest(){
 
         request = given()
                 .header("api-key", "special-key")
@@ -57,12 +57,11 @@ public class PetsTests {
     @Order(2)
     public void GetPetByName_ReturnOk(){
         request
-                .param("name" + pet.getName())
                 .when()
-                .get("/pet/name")
+                .get("/pet/" + pet.getName())
                 .then()
-                .assertThat().statusCode(200).and().and()
-                .time(lessThan(2000l)).and().body(matchesJsonSchemaInClasspath("creatNewPet.json"));
+                .assertThat().statusCode(200).and().time(lessThan(2000L))
+                .and().body("name", equalTo(pet.getName()));
     }
 
     
